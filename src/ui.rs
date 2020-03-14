@@ -1,12 +1,14 @@
-use ggez::*;
 use ggez::event::{self, EventHandler};
 use ggez::graphics::*;
 use ggez::nalgebra::Point2;
+use ggez::*;
 use std::collections::BTreeMap;
 
 pub struct Window {
-    uielements: BTreeMap<&'static str, Box::<dyn UI>>,
+    uielements: Vec<Box<dyn UI>>,
     pos: [f32; 2],
+    width: f32,
+    height: f32,
 }
 
 pub struct Button {
@@ -14,21 +16,23 @@ pub struct Button {
     label: Label,
     shape: Rect,
     color: Color,
+    clicked: bool,
 }
 
 impl Button {
     pub fn new(_x: f32, _y: f32, _label: &str, sizew: f32, sizeh: f32, _color: u32) -> Button {
-        let offx = sizew/2.0;
-        let offy = sizeh/2.0;
-        let labelchild = Label::new(_x+offx, _y+offy, _label, 0xffffff, Talign::Center);
+        let offx = sizew / 2.0;
+        let offy = sizeh / 2.0;
+        //create a label centered on the button
+        let labelchild = Label::new(_x + offx, _y + offy, _label, 0xffffff, Talign::Center);
         Button {
             pos: [_x, _y],
             label: labelchild,
             shape: Rect::new(_x, _y, sizew, sizeh),
             color: Color::from_rgba_u32(_color),
+            clicked: false,
         }
     }
-
 }
 
 impl UI for Button {
@@ -42,9 +46,10 @@ impl UI for Button {
     }
 }
 
+//enum for text alignment
 pub enum Talign {
     Left,
-    Center
+    Center,
 }
 
 pub struct Label {
@@ -70,12 +75,17 @@ impl Label {
 
 impl UI for Label {
     fn draw(&self, ctx: &mut Context) -> GameResult<()> {
+        //align text
         let width = self.label.width(ctx) as f32;
         let height = self.label.height(ctx) as f32;
         let aligned = match self.alignment {
             Talign::Left => Point2::new(self.pos[0], self.pos[1]),
-            Talign::Center => Point2::new(self.pos[0]-(width/2.0), self.pos[1]-(height/2.0)),
+            Talign::Center => {
+                Point2::new(self.pos[0] - (width / 2.0), self.pos[1] - (height / 2.0))
+            }
         };
+
+        //queue text
         Ok(graphics::queue_text(ctx, &self.label, aligned, None))
     }
 }

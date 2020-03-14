@@ -4,18 +4,18 @@ use ggez::{
     conf,
     event::{self, EventHandler},
     filesystem,
-    graphics::{self, Rect, DrawParam},
+    graphics::{self, DrawParam, Rect},
     timer, Context, ContextBuilder, GameResult,
 };
 
 use gfx_glyph::{GlyphBrushBuilder, Section};
 
 use std::{
+    collections::BTreeMap,
     env,
     io::{Read, Write},
     path, str,
     time::Duration,
-    collections::BTreeMap,
 };
 
 #[macro_use]
@@ -25,8 +25,10 @@ extern crate env_logger;
 use log::Level::{Debug, Info};
 
 mod ui;
-
 use ui::*;
+
+mod input;
+use input::*;
 
 enum Scene {
     Loading,
@@ -38,8 +40,9 @@ struct MainState {
     dt: Duration, //delta time
     fps: f64,
     debug: bool,
-    uielements: BTreeMap<&'static str, Box::<dyn UI>>,
+    uielements: BTreeMap<&'static str, Box<dyn UI>>,
     scene: Scene,
+    input: Input,
 }
 
 impl MainState {
@@ -50,10 +53,11 @@ impl MainState {
             debug: log_enabled!(Debug) || log_enabled!(Info),
             scene: Scene::MainMenu,
             uielements: BTreeMap::new(),
+            input: Input::new(),
         }
     }
     pub fn init(&mut self) {
-        let button = Box::new(Button::new(100.0, 200.0, "test", 100.0, 50.0, 0x5c5c5cff));
+        let button = Box::new(Button::new(100.0, 200.0, "test", 50.0, 25.0, 0x5c5c5cff));
         self.uielements.insert("1_button", button);
     }
 }
@@ -63,13 +67,27 @@ impl EventHandler for MainState {
         self.dt = timer::delta(_ctx);
         self.fps = timer::fps(_ctx);
 
-        let fpscounter = Box::new(Label::new(500.0, 10.0, &self.fps.to_string(), 0xFFFFFFFF, Talign::Left));
+        let fpscounter = Box::new(Label::new(
+            10.0,
+            10.0,
+            &self.fps.to_string(),
+            0xFFFFFFFF,
+            Talign::Left,
+        ));
         self.uielements.insert("0_fpscounter", fpscounter);
 
+        let mstring = format!("{}, {}", self.input.mouse.x, self.input.mouse.y);
+        let mpos = Box::new(Label::new(
+                10.0,
+                30.0,
+                &mstring,
+                0xffffffff,
+                Talign::Left,
+        ));
+        self.uielements.insert("2_mpos", mpos);
 
         Ok(())
     }
-
     fn draw(&mut self, _ctx: &mut Context) -> GameResult<()> {
         graphics::clear(_ctx, graphics::BLACK);
         info!("dt: {}ms", self.dt.subsec_millis());
@@ -86,6 +104,11 @@ impl EventHandler for MainState {
         )?;
 
         graphics::present(_ctx)
+    }
+
+    fn mouse_motion_event(&mut self, _ctx: &mut Context, x: f32, y: f32, xrel: f32, yrel: f32) {
+        self.input.mouse.x = x;
+        self.input.mouse.y = y;
     }
 }
 
