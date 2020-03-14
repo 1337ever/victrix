@@ -53,7 +53,7 @@ impl MainState {
         }
     }
     pub fn init(&mut self) {
-        let button = Box::new(Button::new(10.0, 10.0, "test", 100.0, 50.0, 0x5c5c5cff));
+        let button = Box::new(Button::new(100.0, 200.0, "test", 100.0, 50.0, 0x5c5c5cff));
         self.uielements.insert("1_button", button);
     }
 }
@@ -63,7 +63,7 @@ impl EventHandler for MainState {
         self.dt = timer::delta(_ctx);
         self.fps = timer::fps(_ctx);
 
-        let fpscounter = Box::new(Label::new(500.0, 10.0, &self.fps.to_string(), 0xFFFFFFFF));
+        let fpscounter = Box::new(Label::new(500.0, 10.0, &self.fps.to_string(), 0xFFFFFFFF, Talign::Left));
         self.uielements.insert("0_fpscounter", fpscounter);
 
 
