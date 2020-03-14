@@ -4,11 +4,48 @@ use ggez::nalgebra::Point2;
 use ggez::*;
 use std::collections::BTreeMap;
 
+const PADDING: f32 = 10.0;
+
 pub struct Window {
-    uielements: Vec<Box<dyn UI>>,
+    uielements: BTreeMap<&'static str, Box<dyn UI>>,
     pos: [f32; 2],
     width: f32,
     height: f32,
+}
+
+impl Window {
+    pub fn new(_x: f32, _y: f32) -> Window {
+        Window {
+            uielements: BTreeMap::new(),
+            pos: [_x, _y],
+            width: 200.0,
+            height: 10.0,
+        }
+    }
+    //calculate window size and the position of elements in the window
+    pub fn layout_window(&mut self) {
+        let mut i = 0;
+        for (_key, elm) in &self.uielements {
+            //get the initial position of the window
+            let mut px = self.pos[0];
+            let mut py = self.pos[1];
+            //get the size of the element
+            let (sx, sy) = match elm.get_size() {
+                Some(v) => v,
+                None => (0.0, 20.0),
+            };
+            px+=PADDING;
+            py+=( (sy/2.0)*i as f32 )+PADDING;
+            
+            i+=1;
+        }
+    }
+    
+    //insert an element into the window
+    pub fn insert_elm(&mut self, index: &'static str, elm: Box<dyn UI>) {
+        self.uielements.insert(index, elm);
+        self.layout_window();
+    }
 }
 
 pub struct Button {
@@ -43,6 +80,9 @@ impl UI for Button {
         self.label.draw(ctx);
         //draw button
         graphics::draw(ctx, &rectangle, (Point2::new(0.0, 0.0),))
+    }
+    fn get_size(&self) -> Option<(f32, f32)> {
+        Some((self.shape.w, self.shape.h))
     }
 }
 
@@ -88,8 +128,13 @@ impl UI for Label {
         //queue text
         Ok(graphics::queue_text(ctx, &self.label, aligned, None))
     }
+    fn get_size(&self) -> Option<(f32, f32)> {
+        None
+    }
 }
 
+//trait for UI elements
 pub trait UI {
     fn draw(&self, ctx: &mut Context) -> GameResult<()>;
+    fn get_size(&self) -> Option<(f32, f32)>;
 }
