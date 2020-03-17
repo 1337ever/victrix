@@ -1,0 +1,30 @@
+[tasks.format]
+install_crate = "rustfmt"
+command = "cargo"
+args = ["fmt", "--", "--emit=files"]
+
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+[tasks.build]
+command = "cargo"
+args = ["build"]
+
+[tasks.main]
+dependencies = [
+	"format",
+	"build",
+	"copy_resources",
+]
+
+[tasks.copy_resources]
+script = [
+'''
+MAKEDIR=${CARGO_MAKE_WORKING_DIRECTORY}
+rm -rf ${MAKEDIR}/target/debug/resources
+rm -rf ${MAKEDIR}/target/release/resources
+cp -r ${MAKEDIR}/resources ${MAKEDIR}/target/debug
+cp -r ${MAKEDIR}/resources ${MAKEDIR}/target/release
+'''
+]

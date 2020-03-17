@@ -8,7 +8,7 @@ use piston_window::*;
 //Struct for config data like game settings
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub window_size: (u16, u16),
+    pub window_size: [u32; 2],
     pub fullscreen: bool,
     pub vsync: bool,
 
@@ -32,9 +32,7 @@ impl Config {
     }
 }
 
-pub struct Scene {
-
-}
+pub struct Scene {}
 
 pub struct Game {
     config: Config,
@@ -47,10 +45,13 @@ fn main() {
         scene: Scene {},
     };
 
-    let mut window: PistonWindow = WindowSettings::new("Victrix", [640, 480])
+    let mut window: PistonWindow = WindowSettings::new("Victrix", game.config.window_size)
         .exit_on_esc(true)
+        .vsync(game.config.vsync)
+        .fullscreen(game.config.fullscreen)
         .build()
-        .unwrap();
+        .expect("Failed to create window with given configuration.");
+
     while let Some(event) = window.next() {
         window.draw_2d(&event, |context, graphics, _device| {
             clear([1.0; 4], graphics);
