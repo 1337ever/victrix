@@ -5,6 +5,8 @@ use serde::Deserialize;
 
 use piston_window::*;
 
+mod history;
+
 //Struct for config data like game settings
 #[derive(Debug, Deserialize)]
 pub struct Config {
@@ -14,6 +16,8 @@ pub struct Config {
 
     pub volume: f32,     //float between 0 and 1
     pub mouse_sens: f32, //float between 0 and 1
+
+    pub version: f32,
 }
 
 impl Config {
@@ -32,17 +36,22 @@ impl Config {
     }
 }
 
+//struct of all game data which should be saveable
+pub struct Save {}
+
 pub struct Scene {}
 
 pub struct Game {
     config: Config,
     scene: Scene,
+    date: u8,
 }
 
 fn main() {
     let mut game = Game {
         config: Config::new("resources/config.ron"),
         scene: Scene {},
+        date: 0,
     };
 
     let mut window: PistonWindow = WindowSettings::new("Victrix", game.config.window_size)
@@ -51,16 +60,4 @@ fn main() {
         .fullscreen(game.config.fullscreen)
         .build()
         .expect("Failed to create window with given configuration.");
-
-    while let Some(event) = window.next() {
-        window.draw_2d(&event, |context, graphics, _device| {
-            clear([1.0; 4], graphics);
-            rectangle(
-                [1.0, 0.0, 0.0, 1.0], //red
-                [0.0, 0.0, 100.0, 100.0],
-                context.transform,
-                graphics,
-            );
-        });
-    }
 }

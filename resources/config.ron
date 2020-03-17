@@ -6,4 +6,7 @@
     volume: 1.0,
 
     mouse_sens: 1.0,
+
+    //do not edit the following line
+    version: 0.1,
 )

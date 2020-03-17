@@ -1,0 +1,9 @@
+{ //map of history structs
+    "1": ( //history ID 1
+        conditions: { //fire if these conditions are met
+            "datemin": "0",
+            "notfired": "true"
+        },
+        event_id: "1", //ID of event to fire
+    ),
+}

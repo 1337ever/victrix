@@ -1,0 +1,7 @@
+{ //map of all events
+    "1": ( //event ID
+        actions: { //list of effects the event has
+            "addmoney": 100,
+        },
+    ),
+}
