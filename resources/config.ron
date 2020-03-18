@@ -2,6 +2,8 @@
     window_size: (1280, 720),
     fullscreen: false,
     vsync: true,
+    antialiasing: 0,
+    font: "resources/OpenSans-Regular.ttf",
 
     volume: 1.0,
 
