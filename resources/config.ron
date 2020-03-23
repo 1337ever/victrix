@@ -1,5 +1,5 @@
 (
-    size: (1280, 720),
+    size: (640, 480),
     fullscreen: false,
     vsync: true,
     antialiasing: 0,
