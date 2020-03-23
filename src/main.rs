@@ -110,6 +110,14 @@ fn main() {
     //Instantiate list of widget IDs
     //let ids = conrod_example_shared::Ids::new(ui.widget_id_generator());
 
+    widget_ids! {
+        struct Ids {
+            fps,
+        }
+    }
+
+    let ids = Ids::new(ui.widget_id_generator());
+
     let mut image_map = conrod_core::image::Map::new();
 
     while let Some(event) = window.next() {
@@ -130,7 +138,8 @@ fn main() {
 
         window.draw_2d(&event, |context, graphics| {
             if let Some(primitives) = ui.draw_if_changed() {
-                //Cache glyphs to texture cache
+
+                //Function to cache glyphs to texture cache
                 let cache_queued_glyphs = |graphics: &mut G2d,
                                            cache: &mut G2dTexture,
                                            rect: conrod_core::text::rt::Rect<u32>,
