@@ -3,6 +3,7 @@
     fullscreen: false,
     vsync: true,
     antialiasing: 0,
+    fps_target: 60,
     font: "resources/OpenSans-Regular.ttf",
 
     volume: 1.0,
